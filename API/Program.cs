@@ -9,6 +9,22 @@ builder.Services.AddDbContext<API.Data.ApplicationDBContext>(options =>
     )
 );
 
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularLocalhost",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4200", 
+                               "https://localhost:4200")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials(); // Optional, if using cookies/auth
+        });
+});
+
+
+
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(option =>
@@ -28,6 +44,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAngularLocalhost");
 app.MapControllers();
 
 app.Run();
