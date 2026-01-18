@@ -1,12 +1,14 @@
-using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using API.Models;
 
-namespace API.Models
+namespace API.Dtos.Customer
 {
-    public class Customer
+    public class CustomerDto
     {
         public int Id { get; set; }
-        public int? CustomerOrderId { get; set; }
-        [Required]
         public required string Name { get; set; }
         public string Address { get; set; } = string.Empty;
         public string Contact { get; set; } = string.Empty;

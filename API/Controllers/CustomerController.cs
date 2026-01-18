@@ -1,5 +1,9 @@
 using API.Data;
+using API.Dtos.Customer;
+using API.Mappers;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -14,21 +18,71 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var customers = _dbContext.Customers.ToList();
+            var customers = await _dbContext.Customers.ToListAsync();
+            var customersDto = customers.Select(s => s.ToCustomerDto());
+            // .Select(s => s.ToCustomerDto()); // Select() === Map()
 
-            return Ok(customers);
+            return Ok(customersDto);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var customer = _dbContext.Customers.Find(id);
+            var customer = await _dbContext.Customers.FindAsync(id);
 
             if (customer == null) return NotFound();
 
-            return Ok(customer);
+            return Ok(customer.ToCustomerDto());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CustomerPostDto customerPostDto)
+        {
+            var customerModel = customerPostDto.ToCustomerFromPostDto();
+            await _dbContext.Customers.AddAsync(customerModel);
+            await _dbContext.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetById), new { Id = customerModel.Id }, customerModel.ToCustomerDto());
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, CustomerUpdateDto customerUpdateDto)
+        {
+            var customer = await _dbContext.Customers.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            customer.Name = customerUpdateDto.Name;
+            customer.Address = customerUpdateDto.Address;
+            customer.Contact = customerUpdateDto.Contact;
+            customer.Note = customerUpdateDto.Note;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(customer.ToCustomerDto());
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var customer = await _dbContext.Customers.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.Remove(customer);
+            await _dbContext.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
