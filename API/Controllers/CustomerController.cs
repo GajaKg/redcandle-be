@@ -1,7 +1,6 @@
 using API.Data;
 using API.Dtos.Customer;
 using API.Mappers;
-using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

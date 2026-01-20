@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Formats.Asn1;
-using System.Linq;
-using System.Threading.Tasks;
 using API.Data;
 using API.Dtos.Product;
 using API.Mappers;
