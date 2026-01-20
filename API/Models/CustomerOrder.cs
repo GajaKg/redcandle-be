@@ -10,16 +10,13 @@ namespace API.Models
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
-        public int OrderProductId { get; set; }
-        public int Quantity { get; set; }
         public bool Paid { get; set; }
         public bool Delivered { get; set; }
         public DateTime Date { get; set; }
-        public DateTime? DateDelivery { get; set; }
-        public string Note { get; set; } = String.Empty;
+        public DateTime? DateDelivery { get; set; } = default;
+        public string? Note { get; set; } = default;
 
         public Customer Customer { get; set; } = null!;
-
         public List<OrderProduct> OrderProducts { get; set; } = [];
     }
 }

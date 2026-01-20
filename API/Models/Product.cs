@@ -6,7 +6,7 @@ namespace API.Models
     {
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public int StockCapacity { get; set; }
         public int Reserved { get; set; }
