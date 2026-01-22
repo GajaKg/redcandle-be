@@ -1,5 +1,6 @@
 using API.Data;
 using API.Dtos.Customer;
+using API.Interfaces;
 using API.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,18 @@ namespace API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ApplicationDBContext _dbContext;
-        public CustomerController(ApplicationDBContext dbContext)
+        private readonly ICustomerRepository _customerContext;
+        public CustomerController(ApplicationDBContext dbContext, ICustomerRepository customerRepository)
         {
             _dbContext = dbContext;
+            _customerContext = customerRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var customers = await _dbContext.Customers.ToListAsync();
+            var customers = await _customerContext.GetAllAsync();
             var customersDto = customers.Select(s => s.ToCustomerDto());
-            // .Select(s => s.ToCustomerDto()); // Select() === Map()
 
             return Ok(customersDto);
         }
@@ -29,7 +31,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var customer = await _dbContext.Customers.FindAsync(id);
+            var customer = await _customerContext.GetByIdAsync(id);
 
             if (customer == null) return NotFound();
 
@@ -40,8 +42,7 @@ namespace API.Controllers
         public async Task<IActionResult> Create([FromBody] CustomerPostDto customerPostDto)
         {
             var customerModel = customerPostDto.ToCustomerFromPostDto();
-            await _dbContext.Customers.AddAsync(customerModel);
-            await _dbContext.SaveChangesAsync();
+            var customer = _customerContext.CreateAsync(customerModel);
 
             return CreatedAtAction(nameof(GetById), new { Id = customerModel.Id }, customerModel.ToCustomerDto());
         }
@@ -50,19 +51,12 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, CustomerUpdateDto customerUpdateDto)
         {
-            var customer = await _dbContext.Customers.FirstOrDefaultAsync(x => x.Id == id);
+            var customer = await _customerContext.UpdateAsync(id, customerUpdateDto);
 
             if (customer == null)
             {
                 return NotFound();
             }
-
-            customer.Name = customerUpdateDto.Name;
-            customer.Address = customerUpdateDto.Address;
-            customer.Contact = customerUpdateDto.Contact;
-            customer.Note = customerUpdateDto.Note;
-
-            await _dbContext.SaveChangesAsync();
 
             return Ok(customer.ToCustomerDto());
         }
@@ -71,15 +65,12 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var customer = await _dbContext.Customers.FirstOrDefaultAsync(x => x.Id == id);
+            var customer = await _customerContext.DeleteAsync(id);
 
             if (customer == null)
             {
                 return NotFound();
             }
-
-            _dbContext.Remove(customer);
-            await _dbContext.SaveChangesAsync();
 
             return NoContent();
         }

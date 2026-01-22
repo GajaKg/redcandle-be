@@ -1,3 +1,5 @@
+using API.Interfaces;
+using API.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -15,7 +17,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularLocalhost",
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200", 
+            builder.WithOrigins("http://localhost:4200",
                                "https://localhost:4200")
                    .AllowAnyHeader()
                    .AllowAnyMethod()
@@ -31,7 +33,7 @@ builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "redcandle API", Version = "v1" });
 });
-
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 var app = builder.Build();
 
