@@ -1,9 +1,7 @@
-using API.Data;
 using API.Dtos.Customer;
 using API.Interfaces;
 using API.Mappers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -11,11 +9,9 @@ namespace API.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly ApplicationDBContext _dbContext;
         private readonly ICustomerRepository _customerContext;
-        public CustomerController(ApplicationDBContext dbContext, ICustomerRepository customerRepository)
+        public CustomerController(ICustomerRepository customerRepository)
         {
-            _dbContext = dbContext;
             _customerContext = customerRepository;
         }
 
