@@ -9,16 +9,16 @@ namespace API.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerRepository _customerContext;
+        private readonly ICustomerRepository _customerRepository;
         public CustomerController(ICustomerRepository customerRepository)
         {
-            _customerContext = customerRepository;
+            _customerRepository = customerRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var customers = await _customerContext.GetAllAsync();
+            var customers = await _customerRepository.GetAllAsync();
             var customersDto = customers.Select(s => s.ToCustomerDto());
 
             return Ok(customersDto);
@@ -27,7 +27,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var customer = await _customerContext.GetByIdAsync(id);
+            var customer = await _customerRepository.GetByIdAsync(id);
 
             if (customer == null) return NotFound();
 
@@ -38,7 +38,7 @@ namespace API.Controllers
         public async Task<IActionResult> Create([FromBody] CustomerPostDto customerPostDto)
         {
             var customerModel = customerPostDto.ToCustomerFromPostDto();
-            var customer = _customerContext.CreateAsync(customerModel);
+            var customer = _customerRepository.CreateAsync(customerModel);
 
             return CreatedAtAction(nameof(GetById), new { Id = customerModel.Id }, customerModel.ToCustomerDto());
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, CustomerUpdateDto customerUpdateDto)
         {
-            var customer = await _customerContext.UpdateAsync(id, customerUpdateDto);
+            var customer = await _customerRepository.UpdateAsync(id, customerUpdateDto);
 
             if (customer == null)
             {
@@ -61,7 +61,7 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var customer = await _customerContext.DeleteAsync(id);
+            var customer = await _customerRepository.DeleteAsync(id);
 
             if (customer == null)
             {
