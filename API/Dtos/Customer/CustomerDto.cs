@@ -1,4 +1,4 @@
-using API.Models;
+using API.Dtos.Order;
 
 namespace API.Dtos.Customer
 {
@@ -10,6 +10,6 @@ namespace API.Dtos.Customer
         public string Contact { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
 
-        public List<CustomerOrder> Orders { get; set; } = new List<CustomerOrder>();
+        public List<CustomerOrderDto> Orders { get; set; } = [];
     }
 }

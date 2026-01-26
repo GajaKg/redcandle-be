@@ -19,9 +19,10 @@ namespace API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var customers = await _customerRepository.GetAllAsync();
-            var customersDto = customers.Select(s => s.ToCustomerDto());
+            // var customersDto = customers.Select(s => s.ToCustomerDto());
 
-            return Ok(customersDto);
+            // return Ok(customersDto);
+            return Ok(customers);
         }
 
         [HttpGet("{id}")]
@@ -38,7 +39,7 @@ namespace API.Controllers
         public async Task<IActionResult> Create([FromBody] CustomerPostDto customerPostDto)
         {
             var customerModel = customerPostDto.ToCustomerFromPostDto();
-            var customer = _customerRepository.CreateAsync(customerModel);
+            var customer = await _customerRepository.CreateAsync(customerModel);
 
             return CreatedAtAction(nameof(GetById), new { Id = customerModel.Id }, customerModel.ToCustomerDto());
         }

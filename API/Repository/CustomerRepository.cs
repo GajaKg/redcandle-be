@@ -15,9 +15,21 @@ namespace API.Repository
             _context = dbContext;
         }
 
-        public async Task<List<Customer>> GetAllAsync()
+        public async Task<List<CustomerDto>> GetAllAsync()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers
+                        .Select(c => new CustomerDto
+                        {
+                            Id = c.Id,
+                            Name = c.Name,
+                            Address = c.Address,
+                            Contact = c.Contact,
+                            Note = c.Note,
+                            Orders = c.CustomerOrders
+                                .Select(o => o.ToCustomerOrderDto())
+                                .ToList()
+                        })
+                        .ToListAsync();
         }
 
         public async Task<Customer> CreateAsync(Customer customer)

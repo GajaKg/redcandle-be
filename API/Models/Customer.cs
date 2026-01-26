@@ -11,6 +11,6 @@ namespace API.Models
         public string Contact { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
 
-        public List<CustomerOrder> Orders { get; set; } = new List<CustomerOrder>();
+        public List<CustomerOrder> CustomerOrders { get; set; } = new List<CustomerOrder>();
     }
 }

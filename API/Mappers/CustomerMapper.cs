@@ -14,7 +14,9 @@ namespace API.Mappers
                 Address = customerModel.Address,
                 Contact = customerModel.Contact,
                 Note = customerModel.Note,
-                Orders = customerModel.Orders
+                Orders = customerModel.CustomerOrders
+                    .Select(o => o.ToCustomerOrderDto())
+                    .ToList()
             };
         }
 
