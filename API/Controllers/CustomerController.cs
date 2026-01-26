@@ -32,7 +32,7 @@ namespace API.Controllers
 
             if (customer == null) return NotFound();
 
-            return Ok(customer.ToCustomerDto());
+            return Ok(customer);
         }
 
         [HttpPost]

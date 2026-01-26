@@ -25,9 +25,7 @@ namespace API.Repository
                             Address = c.Address,
                             Contact = c.Contact,
                             Note = c.Note,
-                            Orders = c.CustomerOrders
-                                .Select(o => o.ToCustomerOrderDto())
-                                .ToList()
+                            Orders = c.CustomerOrders.Select(o => o.ToCustomerOrderDto()).ToList()
                         })
                         .ToListAsync();
         }
@@ -53,9 +51,20 @@ namespace API.Repository
             return customer;
         }
 
-        public async Task<Customer?> GetByIdAsync(int id)
+        public async Task<CustomerDto?> GetByIdAsync(int id)
         {
-            return await _context.Customers.FindAsync(id);
+            return await _context.Customers
+                .Where(c => c.Id == id)
+                .Select(c => new CustomerDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Address = c.Address,
+                    Contact = c.Contact,
+                    Note = c.Note,
+                    Orders = c.CustomerOrders.Select(o => o.ToCustomerOrderDto()).ToList()
+                })
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Customer?> UpdateAsync(int id, CustomerUpdateDto customerUpdateDto)
