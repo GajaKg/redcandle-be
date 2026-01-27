@@ -79,7 +79,20 @@ namespace API.Repository
                     Address = c.Address,
                     Contact = c.Contact,
                     Note = c.Note,
-                    Orders = c.CustomerOrders.Select(o => o.ToCustomerOrderDto()).ToList()
+                    Orders = c.CustomerOrders.Select(o => new CustomerOrderDto
+                    {
+                        Id = o.Id,
+                        Date = o.Date,
+                        Paid = o.Paid,
+                        Delivered = o.Delivered,
+                        Note = o.Note,
+                        Products = o.OrderProducts.Select(op => new OrderProductDto
+                        {
+                            ProductId = op.ProductId,
+                            ProductName = op.Product.Name,
+                            Quantity = op.Quantity
+                        }).ToList()
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
         }
