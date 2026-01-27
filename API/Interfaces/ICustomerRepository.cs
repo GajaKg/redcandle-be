@@ -9,6 +9,6 @@ namespace API.Interfaces
         Task<CustomerDto?> GetByIdAsync(int id);
         Task<Customer> CreateAsync(Customer customer);
         Task<Customer?> UpdateAsync(int id, CustomerUpdateDto customerUpdateDto);
-        Task<Customer> DeleteAsync(int id);
+        Task<Customer?> DeleteAsync(int id);
     }
 }

@@ -22,9 +22,10 @@ namespace API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var products = await _contextProduct.GetAllAsync();
-            var productsDto = products.Select(p => p.ToProductDto());
+            // var productsDto = products.Select(p => p.ToProductDto());
 
-            return Ok(productsDto);
+            return Ok(products);
+            // return Ok(productsDto);
         }
 
         [HttpGet]

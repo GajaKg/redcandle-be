@@ -1,5 +1,6 @@
 using API.Data;
 using API.Dtos.Customer;
+using API.Dtos.Order;
 using API.Interfaces;
 using API.Mappers;
 using API.Models;
@@ -18,17 +19,33 @@ namespace API.Repository
         public async Task<List<CustomerDto>> GetAllAsync()
         {
             return await _context.Customers
-                        .Select(c => new CustomerDto
+                .AsNoTracking()
+                .Select(c => new CustomerDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Address = c.Address,
+                    Contact = c.Contact,
+                    Note = c.Note,
+                    Orders = c.CustomerOrders.Select(o => new CustomerOrderDto
+                    {
+                        Id = o.Id,
+                        Date = o.Date,
+                        Paid = o.Paid,
+                        Delivered = o.Delivered,
+                        Note = o.Note,
+                        Products = o.OrderProducts.Select(op => new OrderProductDto
                         {
-                            Id = c.Id,
-                            Name = c.Name,
-                            Address = c.Address,
-                            Contact = c.Contact,
-                            Note = c.Note,
-                            Orders = c.CustomerOrders.Select(o => o.ToCustomerOrderDto()).ToList()
-                        })
-                        .ToListAsync();
+                            ProductId = op.ProductId,
+                            ProductName = op.Product.Name,
+                            Quantity = op.Quantity
+                        }).ToList()
+                    }).ToList()
+                })
+                .ToListAsync();
         }
+
+
 
         public async Task<Customer> CreateAsync(Customer customer)
         {

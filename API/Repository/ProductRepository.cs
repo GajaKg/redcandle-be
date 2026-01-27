@@ -38,7 +38,7 @@ namespace API.Repository
 
         public async Task<List<Product>> GetAllAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products.Include(x => x.Category).ToListAsync();
         }
 
         public async Task<Product?> GetByIdAsync(int id)
