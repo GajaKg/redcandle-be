@@ -1,6 +1,7 @@
 using API.Data;
 using API.Dtos.Product;
 using API.Interfaces;
+using API.Mappers;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,9 +37,12 @@ namespace API.Repository
             return product;
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<List<ProductDto>> GetAllAsync()
         {
-            return await _context.Products.Include(x => x.Category).ToListAsync();
+            return await _context.Products
+                .Include(x => x.Category)
+                .Select(p => p.ToProductDto())
+                .ToListAsync();
         }
 
         public async Task<Product?> GetByIdAsync(int id)

@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260610201102_UpdateDN")]
+    partial class UpdateDN
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,7 @@ namespace API.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("API.Models.Order", b =>
+            modelBuilder.Entity("API.Models.CustomerOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -98,7 +101,7 @@ namespace API.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("CustomerOrders");
                 });
 
             modelBuilder.Entity("API.Models.OrderProduct", b =>
@@ -109,7 +112,7 @@ namespace API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("OrderId")
+                    b.Property<int>("CustomerOrderId")
                         .HasColumnType("integer");
 
                     b.Property<int>("ProductId")
@@ -120,7 +123,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("CustomerOrderId");
 
                     b.HasIndex("ProductId");
 
@@ -182,10 +185,10 @@ namespace API.Migrations
                     b.ToTable("Production");
                 });
 
-            modelBuilder.Entity("API.Models.Order", b =>
+            modelBuilder.Entity("API.Models.CustomerOrder", b =>
                 {
                     b.HasOne("API.Models.Customer", "Customer")
-                        .WithMany("Orders")
+                        .WithMany("CustomerOrders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -195,9 +198,9 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.OrderProduct", b =>
                 {
-                    b.HasOne("API.Models.Order", "Order")
+                    b.HasOne("API.Models.CustomerOrder", "CustomerOrder")
                         .WithMany("OrderProducts")
-                        .HasForeignKey("OrderId")
+                        .HasForeignKey("CustomerOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -207,7 +210,7 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Order");
+                    b.Navigation("CustomerOrder");
 
                     b.Navigation("Product");
                 });
@@ -241,10 +244,10 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Customer", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("CustomerOrders");
                 });
 
-            modelBuilder.Entity("API.Models.Order", b =>
+            modelBuilder.Entity("API.Models.CustomerOrder", b =>
                 {
                     b.Navigation("OrderProducts");
                 });

@@ -10,6 +10,6 @@ namespace API.Dtos.Customer
         public string Contact { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
 
-        public List<CustomerOrderDto> Orders { get; set; } = [];
+        public List<OrderDto> Orders { get; set; } = [];
     }
 }

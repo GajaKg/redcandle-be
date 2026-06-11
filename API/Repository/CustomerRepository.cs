@@ -2,7 +2,6 @@ using API.Data;
 using API.Dtos.Customer;
 using API.Dtos.Order;
 using API.Interfaces;
-using API.Mappers;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +26,7 @@ namespace API.Repository
                     Address = c.Address,
                     Contact = c.Contact,
                     Note = c.Note,
-                    Orders = c.CustomerOrders.Select(o => new CustomerOrderDto
+                    Orders = c.Orders.Select(o => new OrderDto
                     {
                         Id = o.Id,
                         Date = o.Date,
@@ -36,16 +35,14 @@ namespace API.Repository
                         Note = o.Note,
                         Products = o.OrderProducts.Select(op => new OrderProductDto
                         {
-                            ProductId = op.ProductId,
-                            ProductName = op.Product.Name,
+                            Id = op.ProductId,
+                            Name = op.Product.Name,
                             Quantity = op.Quantity
                         }).ToList()
                     }).ToList()
                 })
                 .ToListAsync();
         }
-
-
 
         public async Task<Customer> CreateAsync(Customer customer)
         {
@@ -79,7 +76,7 @@ namespace API.Repository
                     Address = c.Address,
                     Contact = c.Contact,
                     Note = c.Note,
-                    Orders = c.CustomerOrders.Select(o => new CustomerOrderDto
+                    Orders = c.Orders.Select(o => new OrderDto
                     {
                         Id = o.Id,
                         Date = o.Date,
@@ -88,8 +85,8 @@ namespace API.Repository
                         Note = o.Note,
                         Products = o.OrderProducts.Select(op => new OrderProductDto
                         {
-                            ProductId = op.ProductId,
-                            ProductName = op.Product.Name,
+                            Id = op.ProductId,
+                            Name = op.Product.Name,
                             Quantity = op.Quantity
                         }).ToList()
                     }).ToList()
@@ -114,6 +111,11 @@ namespace API.Repository
             await _context.SaveChangesAsync();
 
             return customer;
+        }
+
+        public async Task<bool> CustomerExist(int id)
+        {
+            return await _context.Customers.AnyAsync(c => c.Id == id);
         }
     }
 }

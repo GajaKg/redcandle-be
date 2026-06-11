@@ -9,8 +9,8 @@ namespace API.Models
         public required string Name { get; set; }
         public string Address { get; set; } = string.Empty;
         public string Contact { get; set; } = string.Empty;
-        public string Note { get; set; } = string.Empty;
+        public string? Note { get; set; } = string.Empty;
 
-        public List<CustomerOrder> CustomerOrders { get; set; } = new List<CustomerOrder>();
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }

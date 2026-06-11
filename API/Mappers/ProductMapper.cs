@@ -13,7 +13,8 @@ namespace API.Mappers
                 Name = product.Name,
                 Quantity = product.Quantity,
                 StockCapacity = product.StockCapacity,
-                Reserved = product.Reserved
+                Reserved = product.Reserved,
+                Category = product.Category.Name
             };
         }
 

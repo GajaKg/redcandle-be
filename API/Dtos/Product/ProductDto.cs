@@ -7,5 +7,6 @@ namespace API.Dtos.Product
         public int Quantity { get; set; }
         public int StockCapacity { get; set; }
         public int Reserved { get; set; }
+        public string Category { get; set; } = string.Empty;
     }
 }

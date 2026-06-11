@@ -12,7 +12,7 @@ namespace API.Data
         }
 
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<CustomerOrder> CustomerOrders { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -21,15 +21,17 @@ namespace API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderProduct>()
-                .HasOne(op => op.CustomerOrder)
-                .WithMany(o => o.OrderProducts)
-                .HasForeignKey(op => op.CustomerOrderId)
+                .HasOne(op => op.Product)
+                .WithMany(op => op.OrderProducts)
+                .HasForeignKey(op => op.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<OrderProduct>()
-                .HasOne(op => op.Product)
-                .WithMany(p => p.OrderProducts)
-                .HasForeignKey(op => op.ProductId);
+                .HasOne(op => op.Order)
+                .WithMany(op => op.OrderProducts)
+                .HasForeignKey(op => op.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             base.OnModelCreating(modelBuilder);
         }
