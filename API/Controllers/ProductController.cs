@@ -59,13 +59,15 @@ namespace API.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, ProductUpdateDto productUpdateDto)
+        public async Task<ActionResult<ProductDto>> Update([FromRoute] int id, ProductUpdateDto productUpdateDto)
         {
             var product = await _productRepository.UpdateAsync(id, productUpdateDto);
 
             if (product == null) return NotFound();
+            
+            var productDto = await _productRepository.GetByIdAsync(product.Id);
 
-            return Ok(product.ToProductDto());
+            return Ok(productDto);
         }
 
         [HttpDelete]
