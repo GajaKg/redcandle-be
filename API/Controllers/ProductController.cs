@@ -11,17 +11,17 @@ namespace API.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductRepository _contextProduct;
+        private readonly IProductRepository _productRepository;
 
         public ProductController(IProductRepository contextProduct)
         {
-            _contextProduct = contextProduct;
+            _productRepository = contextProduct;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var products = await _contextProduct.GetAllAsync();
+            var products = await _productRepository.GetAllAsync();
             // var productsDto = products.Select(p => p.ToProductDto());
 
             return Ok(products);
@@ -32,30 +32,36 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var product = await _contextProduct.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return Ok(product.ToProductDto());
+            return Ok(product);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(ProductPostDto productPostDto)
         {
             var product = productPostDto.FromProductPostDtoToProduct();
-            await _contextProduct.CreateAsync(product);
+            await _productRepository.CreateAsync(product);
 
-            return CreatedAtAction(nameof(GetById), new { Id = product.Id }, product.ToProductDto());
+            var dto = await _productRepository.GetByIdAsync(product.Id);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = dto!.Id },
+                dto
+            );
         }
 
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, ProductUpdateDto productUpdateDto)
         {
-            var product = await _contextProduct.UpdateAsync(id, productUpdateDto);
+            var product = await _productRepository.UpdateAsync(id, productUpdateDto);
 
             if (product == null) return NotFound();
 
@@ -66,7 +72,7 @@ namespace API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var product = await _contextProduct.DeleteAsync(id);
+            var product = await _productRepository.DeleteAsync(id);
 
             if (product == null) return NotFound();
 

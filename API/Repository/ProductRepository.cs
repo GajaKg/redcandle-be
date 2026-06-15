@@ -45,16 +45,19 @@ namespace API.Repository
                 .ToListAsync();
         }
 
-        public async Task<Product?> GetByIdAsync(int id)
+        public async Task<ProductDto?> GetByIdAsync(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            // var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+                            .Include(p => p.Category)
+                            .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
             {
                 return null;
             }
 
-            return product;
+            return product.ToProductDto();
         }
 
         public async Task<Product?> UpdateAsync(int id, ProductUpdateDto productUpdateDto)

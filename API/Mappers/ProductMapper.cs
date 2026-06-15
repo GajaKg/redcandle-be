@@ -14,7 +14,7 @@ namespace API.Mappers
                 Quantity = product.Quantity,
                 StockCapacity = product.StockCapacity,
                 Reserved = product.Reserved,
-                Category = product.Category.Name
+                CategoryName = product.Category.Name
             };
         }
 
@@ -25,7 +25,8 @@ namespace API.Mappers
                 Name = productPostDto.Name,
                 Quantity = productPostDto.Quantity,
                 StockCapacity = productPostDto.StockCapacity,
-                Reserved = productPostDto.Reserved
+                Reserved = productPostDto.Reserved,
+                CategoryId = productPostDto.CategoryId
             };
         }
     }
