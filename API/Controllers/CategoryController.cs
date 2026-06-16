@@ -32,7 +32,7 @@ namespace API.Controllers
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null) return NotFound();
 
-            return Ok(category);
+            return Ok(category.ToCategoryDto());
         }
 
         [HttpPost]
@@ -48,5 +48,33 @@ namespace API.Controllers
 
             return Ok(result.ToCategoryDto());
         }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult<CategoryDto>> EditAsync([FromRoute] int id, [FromBody] CategoryPostDto categoryPostDto)
+        {
+            var categoryModel = new Category
+            {
+                Id = id,
+                Name = categoryPostDto.Name
+            };
+
+            var response = await _categoryRepository.UpdateAsync(id, categoryModel);
+
+            if (response == null) return BadRequest();
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var deletedCategory = await _categoryRepository.DeleteAsync(id);
+
+            if (deletedCategory == null) return NotFound();
+
+            return NoContent();
+        }
     }
-}
+};

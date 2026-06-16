@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using API.Dtos.Product;
 
 namespace API.Dtos.Category
 {
    public sealed record CategoryDto (
-        string Name
-        // public List<Product> Products { get; set; } = new List<Product>();
+        int Id,
+        string Name,
+        List<ProductDto> Products
    );
 }

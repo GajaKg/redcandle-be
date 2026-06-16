@@ -23,28 +23,48 @@ namespace API.Repository
             return category;
         }
 
-        public Task<Category> DeleteAsync(int id)
+        public async Task<Category?> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            if (category == null) return null;
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+
+            return category;
         }
 
         public async Task<List<Category>> GetAllAsync()
         {
-            return await _context.Categories.AsNoTracking().ToListAsync();
+            return await _context.Categories
+                .AsNoTracking()
+                .OrderBy(c => c.Id)
+                .ToListAsync();
         }
 
         public async Task<Category?> GetByIdAsync(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                                    .Include(c => c.Products)
+                                    .FirstOrDefaultAsync(c => c.Id == id);
+            // .FindAsync(id);
 
             if (category == null) return null;
 
             return category;
         }
 
-        public Task<Category?> UpdateAsync(int id, Category categoryUpdateDto)
+        public async Task<Category?> UpdateAsync(int id, Category category)
         {
-            throw new NotImplementedException();
+            var categoryModel = await _context.Categories.FindAsync(id);
+
+            if (category == null) return null;
+
+            categoryModel!.Name = category.Name;
+
+            await _context.SaveChangesAsync();
+
+            return categoryModel;
         }
     }
 }

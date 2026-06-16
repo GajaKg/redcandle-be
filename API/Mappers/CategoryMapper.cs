@@ -7,7 +7,11 @@ namespace API.Mappers
     {
         public static CategoryDto ToCategoryDto(this Category category)
         {
-            return new CategoryDto(category.Name);
+            return new CategoryDto(
+             category.Id,
+             category.Name,
+             category.Products.Select(p => p.ToProductDto()).ToList()
+         );
         }
     }
 }
