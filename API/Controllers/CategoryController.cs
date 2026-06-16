@@ -1,5 +1,7 @@
+using API.Dtos.Category;
 using API.Interfaces;
 using API.Mappers;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -19,7 +21,7 @@ namespace API.Controllers
         {
             var categories = await _categoryRepository.GetAllAsync();
             // var mapped = categories.Select(c => c.ToCategoryDto());
-// add dto mapper
+            // add dto mapper
             return Ok(categories);
         }
 
@@ -33,5 +35,18 @@ namespace API.Controllers
             return Ok(category);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<CategoryDto>> CreateAsync(CategoryPostDto categoryPostDto)
+        {
+            var categoryModel = new Category
+            {
+                Name = categoryPostDto.Name
+            };
+
+            var result = await _categoryRepository.CreateAsync(categoryModel);
+            if (result == null) return BadRequest();
+
+            return Ok(result.ToCategoryDto());
+        }
     }
 }

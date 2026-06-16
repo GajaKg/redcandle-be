@@ -6,7 +6,7 @@ namespace API.Interfaces
     {
         Task<List<Category>> GetAllAsync();
         Task<Category?> GetByIdAsync(int id);
-        Task<Customer> CategoryCreateAsync(Category category);
+        Task<Category> CreateAsync(Category category);
         Task<Category?> UpdateAsync(int id, Category categoryUpdateDto);
         Task<Category> DeleteAsync(int id);
     }

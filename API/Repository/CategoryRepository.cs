@@ -1,4 +1,5 @@
 using API.Data;
+using API.Dtos.Category;
 using API.Interfaces;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,15 +9,18 @@ namespace API.Repository
     public class CategoryRepository : ICategoryRepository
     {
         private readonly ApplicationDBContext _context;
-        
+
         public CategoryRepository(ApplicationDBContext context)
         {
             _context = context;
         }
 
-        public Task<Customer> CategoryCreateAsync(Category category)
+        public async Task<Category> CreateAsync(Category category)
         {
-            throw new NotImplementedException();
+            await _context.Categories.AddAsync(category);
+            await _context.SaveChangesAsync();
+
+            return category;
         }
 
         public Task<Category> DeleteAsync(int id)
@@ -26,7 +30,7 @@ namespace API.Repository
 
         public async Task<List<Category>> GetAllAsync()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.AsNoTracking().ToListAsync();
         }
 
         public async Task<Category?> GetByIdAsync(int id)
@@ -35,7 +39,7 @@ namespace API.Repository
 
             if (category == null) return null;
 
-            return category; 
+            return category;
         }
 
         public Task<Category?> UpdateAsync(int id, Category categoryUpdateDto)
