@@ -22,6 +22,22 @@ namespace API.Mappers
         //                     .ToList()
         //     };
 
+        public static CustomerWithOrdersDto ToCustomerWithOrdersDto(this Customer customerModel)
+        {
+            return new CustomerWithOrdersDto
+            {
+                Id = customerModel.Id,
+                Name = customerModel.Name,
+                Address = customerModel.Address,
+                Contact = customerModel.Contact,
+                Note = customerModel.Note,
+                Date = customerModel.Date,
+                Orders = customerModel.Orders
+                    .Select(o => o.ToOrderDto())
+                    .ToList()
+            };
+        }
+        
         public static CustomerDto ToCustomerDto(this Customer customerModel)
         {
             return new CustomerDto
@@ -31,9 +47,10 @@ namespace API.Mappers
                 Address = customerModel.Address,
                 Contact = customerModel.Contact,
                 Note = customerModel.Note,
-                Orders = customerModel.Orders
-                    .Select(o => o.ToOrderDto())
-                    .ToList()
+                Date = customerModel.Date,
+                // Orders = customerModel.Orders
+                //     .Select(o => o.ToOrderDto())
+                //     .ToList()
             };
         }
 

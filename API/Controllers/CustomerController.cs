@@ -36,6 +36,17 @@ namespace API.Controllers
             return Ok(customer);
         }
 
+        [HttpGet]
+        [Route("{customerId}/orders")]
+        public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId)
+        {
+            var customer = await _customerRepository.GetOrdersByCustomerIdAsync(customerId);
+
+            if (customer == null) return NotFound();
+
+            return Ok(customer);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CustomerPostDto customerPostDto)
         {
