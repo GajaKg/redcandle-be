@@ -1,6 +1,7 @@
 using API.Data;
 using API.Dtos.Customer;
 using API.Dtos.Order;
+using API.Helpers;
 using API.Interfaces;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,9 @@ namespace API.Repository
             _context = dbContext;
         }
 
-        public async Task<List<CustomerDto>> GetAllAsync()
+        public async Task<PagedList<CustomerDto>> GetAllAsync(PaginationParams paginationParams)
         {
-            return await _context.Customers
+            var query = _context.Customers
                 .AsNoTracking()
                 .Select(c => new CustomerDto
                 {
@@ -40,8 +41,10 @@ namespace API.Repository
                             Quantity = op.Quantity
                         }).ToList()
                     }).ToList()
-                })
-                .ToListAsync();
+                }).AsQueryable();
+
+            return await PagedList<CustomerDto>.CreateAsync(query, paginationParams.CurrentPage, paginationParams.PageSize);
+            // .ToListAsync();
         }
 
         public async Task<Customer> CreateAsync(Customer customer)

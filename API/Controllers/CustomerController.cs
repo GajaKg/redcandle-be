@@ -1,4 +1,5 @@
 using API.Dtos.Customer;
+using API.Helpers;
 using API.Interfaces;
 using API.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +17,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParams paginationParams)
         {
-            var customers = await _customerRepository.GetAllAsync();
+            var customers = await _customerRepository.GetAllAsync(paginationParams);
             // var customersDto = customers.Select(s => s.ToCustomerDto());
 
             // return Ok(customersDto);

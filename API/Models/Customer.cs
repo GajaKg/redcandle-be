@@ -10,6 +10,7 @@ namespace API.Models
         public string Address { get; set; } = string.Empty;
         public string Contact { get; set; } = string.Empty;
         public string? Note { get; set; } = string.Empty;
+        public DateTime Date { get; set; } = DateTime.Now;
 
         public List<Order> Orders { get; set; } = new List<Order>();
     }
