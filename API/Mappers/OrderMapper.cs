@@ -15,7 +15,7 @@ namespace API.Mappers
                 Paid = order.Paid,
                 Delivered = order.Delivered,
                 Note = order.Note,
-                Products = order.OrderProducts
+                OrderProducts = order.OrderProducts
                     .Select(op => new OrderProductDto
                     {
                         Id = op.ProductId,
@@ -25,7 +25,7 @@ namespace API.Mappers
                     .ToList()
             };
         }
-        
+
         public static Expression<Func<Order, OrderDto>> ToOrderDtoV2 =
         order => new OrderDto
         {
@@ -34,7 +34,7 @@ namespace API.Mappers
             Paid = order.Paid,
             Delivered = order.Delivered,
             Note = order.Note,
-            Products = order.OrderProducts
+            OrderProducts = order.OrderProducts
                             .Select(op => new OrderProductDto
                             {
                                 Id = op.ProductId,
@@ -44,16 +44,22 @@ namespace API.Mappers
                             .ToList()
         };
 
-        public static Order ToCustomerOrderFromCreateCustomerDto(this OrderPostDto customerOrderPostDto, int customerId)
+        // public static Order ToOrderFromPostOrderDto(this OrderPostDto orderPostDto, int customerId)
+        public static Order ToOrderFromPostOrderDto(this OrderPostDto orderPostDto)
         {
             return new Order
             {
-                CustomerId = customerId,
-                Paid = customerOrderPostDto.Paid,
-                Date = customerOrderPostDto.Date,
-                Delivered = customerOrderPostDto.Delivered,
-                Note = customerOrderPostDto.Note,
-
+                CustomerId = orderPostDto.CustomerId,
+                Paid = orderPostDto.Paid,
+                Date = orderPostDto.Date,
+                Delivered = orderPostDto.Delivered,
+                Note = orderPostDto.Note,
+                // OrderProducts = orderPostDto.Products.Select(p => p.FromProductPostDtoToProduct()).ToList()
+                OrderProducts = orderPostDto.OrderProducts.Select(p => new OrderProduct
+                {
+                    Quantity = p.Quantity,
+                    ProductId = p.ProductId,
+                }).ToList()
             };
         }
     }

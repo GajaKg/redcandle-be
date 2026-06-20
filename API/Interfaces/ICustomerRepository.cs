@@ -10,5 +10,6 @@ namespace API.Interfaces
         Task<Customer> CreateAsync(Customer customer);
         Task<Customer?> UpdateAsync(int id, CustomerUpdateDto customerUpdateDto);
         Task<Customer?> DeleteAsync(int id);
+        Task<bool> CustomerExist(int id);
     }
 }

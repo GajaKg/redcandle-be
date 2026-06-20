@@ -32,7 +32,6 @@ namespace API.Data
                 .HasForeignKey(op => op.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
             base.OnModelCreating(modelBuilder);
         }
     }

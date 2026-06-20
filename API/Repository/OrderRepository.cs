@@ -1,7 +1,10 @@
 
 using API.Data;
+using API.Dtos.Order;
 using API.Interfaces;
+using API.Mappers;
 using API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repository
 {
@@ -9,13 +12,10 @@ namespace API.Repository
     {
 
         private readonly ApplicationDBContext _context;
-        // private readonly CustomerRepository _customerRepository;
 
         public OrderRepository(ApplicationDBContext context)
-        // public CustomerOrderRepository(ApplicationDBContext context, CustomerRepository customerRepository)
         {
             _context = context;
-            // _customerRepository = customerRepository;
         }
 
         public async Task<Order?> CreateAsync(Order customerOrder)
@@ -30,20 +30,46 @@ namespace API.Repository
             throw new NotImplementedException();
         }
 
-        public Task<List<Order>> GetAllAsync()
+        public async Task<List<OrderDto>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var orders = await _context.Orders
+                .AsNoTracking()
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .Select(o => o.ToOrderDto())
+                .ToListAsync();
+
+            return orders;
         }
 
-        public async Task<Order?> GetByIdAsync(int id)
+        public async Task<OrderDto?> GetByIdAsync(int id)
         {
-            var customerOrder = await _context.Orders.FindAsync(id);
+            // var customerOrder = await _context.Orders.FindAsync(id);
+            var customerOrder = await _context.Orders
+                .Include(p => p.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
             if (customerOrder == null)
             {
                 return null;
             }
 
-            return customerOrder;
+            return customerOrder.ToOrderDto();
+        }
+
+        public async Task<List<OrderDto>> GetOrdersByClientIdAsync(int id)
+        {
+            var orders = await _context.Orders
+                .AsNoTracking()
+                .Where(o => o.CustomerId == id)
+                .OrderBy(o => o.Date)
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .Select(o => o.ToOrderDto())
+                .ToListAsync();
+
+            return orders;
         }
 
         public Task<Order?> UpdateAsync(int id, Order customerOrder)

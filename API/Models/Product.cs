@@ -14,7 +14,6 @@ namespace API.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
 
-        //     public Stock Stock { get; set; } = null!;
         public List<Production> Productions { get; set; } = [];
         public List<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
     }

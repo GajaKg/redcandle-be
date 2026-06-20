@@ -1,3 +1,6 @@
+using API.Dtos.OrderProductDto;
+using API.Models;
+
 namespace API.Dtos.Order
 {
     public sealed record OrderDto
@@ -7,7 +10,7 @@ namespace API.Dtos.Order
         public bool Delivered { get; init; }
         public DateTime Date { get; init; }
         public string? Note { get; init; }
-        public List<OrderProductDto> Products { get; init; } = [];
+        public List<OrderProductDto> OrderProducts { get; init; } = [];
     }
 
     public sealed record OrderPostDto
@@ -18,7 +21,9 @@ namespace API.Dtos.Order
         public DateTime Date { get; init; }
         public DateTime? DateDelivery { get; set; } = default;
         public string? Note { get; init; }
-        public List<OrderProductDto> Products { get; init; } = [];
+        // public List<OrderProduct> OrderProducts { get; init; } = [];
+        public List<ProductOrderPostDto> OrderProducts { get; init; } = [];
+
     }
 
     public class OrderProductDto

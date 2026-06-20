@@ -33,7 +33,7 @@ namespace API.Repository
                         Paid = o.Paid,
                         Delivered = o.Delivered,
                         Note = o.Note,
-                        Products = o.OrderProducts.Select(op => new OrderProductDto
+                        OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
                         {
                             Id = op.ProductId,
                             Name = op.Product.Name,
@@ -83,7 +83,7 @@ namespace API.Repository
                         Paid = o.Paid,
                         Delivered = o.Delivered,
                         Note = o.Note,
-                        Products = o.OrderProducts.Select(op => new OrderProductDto
+                        OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
                         {
                             Id = op.ProductId,
                             Name = op.Product.Name,
