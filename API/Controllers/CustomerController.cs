@@ -38,9 +38,9 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{customerId}/orders")]
-        public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId)
+        public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId, [FromQuery] OrdersOrderByParams ordersOrderByParams)
         {
-            var customer = await _customerRepository.GetOrdersByCustomerIdAsync(customerId);
+            var customer = await _customerRepository.GetOrdersByCustomerIdAsync(customerId, ordersOrderByParams);
 
             if (customer == null) return NotFound();
 

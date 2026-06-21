@@ -1,4 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using API.Dtos.Order;
+using API.Helpers;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace API.Dtos.Customer
 {
@@ -22,6 +25,6 @@ namespace API.Dtos.Customer
         public string? Note { get; set; } = string.Empty;
         public DateTime Date { get; set; }
 
-        public List<OrderDto> Orders { get; set; } = [];
+        public required PagedList<OrderDto> Orders { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 using API.Dtos.Customer;
+using API.Dtos.Order;
+using API.Helpers;
 using API.Models;
 
 namespace API.Mappers
@@ -22,7 +24,10 @@ namespace API.Mappers
         //                     .ToList()
         //     };
 
-        public static CustomerWithOrdersDto ToCustomerWithOrdersDto(this Customer customerModel)
+        public static CustomerWithOrdersDto ToCustomerWithOrdersDto(
+            this Customer customerModel,
+            PagedList<OrderDto> orders
+        )
         {
             return new CustomerWithOrdersDto
             {
@@ -32,12 +37,10 @@ namespace API.Mappers
                 Contact = customerModel.Contact,
                 Note = customerModel.Note,
                 Date = customerModel.Date,
-                Orders = customerModel.Orders
-                    .Select(o => o.ToOrderDto())
-                    .ToList()
+                Orders = orders
             };
         }
-        
+
         public static CustomerDto ToCustomerDto(this Customer customerModel)
         {
             return new CustomerDto
@@ -47,10 +50,7 @@ namespace API.Mappers
                 Address = customerModel.Address,
                 Contact = customerModel.Contact,
                 Note = customerModel.Note,
-                Date = customerModel.Date,
-                // Orders = customerModel.Orders
-                //     .Select(o => o.ToOrderDto())
-                //     .ToList()
+                Date = customerModel.Date
             };
         }
 
