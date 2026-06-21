@@ -3,6 +3,7 @@ using API.Dtos.Customer;
 using API.Dtos.Order;
 using API.Helpers;
 using API.Interfaces;
+using API.Mappers;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,36 +17,16 @@ namespace API.Repository
             _context = dbContext;
         }
 
-        public async Task<PagedList<CustomerDto>> GetAllAsync(PaginationParams paginationParams)
+        public async Task<PagedList<CustomerDto>> GetAllAsync(OrderByParams orderByParams)
         {
-            var query = _context.Customers
-                .AsNoTracking()
-                .Select(c => new CustomerDto
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Address = c.Address,
-                    Contact = c.Contact,
-                    Note = c.Note,
-                    Date = c.Date,
-                    // Orders = c.Orders.Select(o => new OrderDto
-                    // {
-                    //     Id = o.Id,
-                    //     Date = o.Date,
-                    //     Paid = o.Paid,
-                    //     Delivered = o.Delivered,
-                    //     Note = o.Note,
-                    //     OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
-                    //     {
-                    //         Id = op.ProductId,
-                    //         Name = op.Product.Name,
-                    //         Quantity = op.Quantity
-                    //     }).ToList()
-                    // }).ToList()
-                }).AsQueryable();
+            var query = _context.Customers.AsNoTracking().AsQueryable();
+            query = orderByParams.OrderByDate == OrderByDate.Asc
+                    ? query.OrderBy(c => c.Date)
+                    : query.OrderByDescending(c => c.Date);
 
-            return await PagedList<CustomerDto>.CreateAsync(query, paginationParams.CurrentPage, paginationParams.PageSize);
-            // .ToListAsync();
+            var source = query.Select(c => c.ToCustomerDto());
+
+            return await PagedList<CustomerDto>.CreateAsync(source, orderByParams.CurrentPage, orderByParams.PageSize);
         }
 
         public async Task<Customer> CreateAsync(Customer customer)
@@ -81,25 +62,11 @@ namespace API.Repository
                     Contact = c.Contact,
                     Note = c.Note,
                     Date = c.Date,
-                    // Orders = c.Orders.Select(o => new OrderDto
-                    // {
-                    //     Id = o.Id,
-                    //     Date = o.Date,
-                    //     Paid = o.Paid,
-                    //     Delivered = o.Delivered,
-                    //     Note = o.Note,
-                    //     OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
-                    //     {
-                    //         Id = op.ProductId,
-                    //         Name = op.Product.Name,
-                    //         Quantity = op.Quantity
-                    //     }).ToList()
-                    // }).ToList()
                 })
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<CustomerWithOrdersDto?> GetOrdersByCustomerIdAsync(int id, OrdersOrderByParams ordersOrderByParams)
+        public async Task<CustomerWithOrdersDto?> GetOrdersByCustomerIdAsync(int id, OrderByParams orderByParams)
         {
 
             var ordersQuery = _context.Orders
@@ -108,7 +75,7 @@ namespace API.Repository
                                         .Where(o => o.CustomerId == id);
 
             ordersQuery =
-                ordersOrderByParams.OrderByDate == OrderByDate.Asc
+                orderByParams.OrderByDate == OrderByDate.Asc
                     ? ordersQuery.OrderBy(o => o.Date)
                     : ordersQuery.OrderByDescending(o => o.Date);
 
@@ -129,23 +96,14 @@ namespace API.Repository
                         })
                         .ToList()
                 }),
-                ordersOrderByParams.CurrentPage,
-                ordersOrderByParams.PageSize
+                orderByParams.CurrentPage,
+                orderByParams.PageSize
             );
 
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
             if (customer == null) return null;
 
-            return new CustomerWithOrdersDto
-            {
-                Id = customer.Id,
-                Name = customer.Name,
-                Address = customer.Address,
-                Contact = customer.Contact,
-                Note = customer.Note,
-                Date = customer.Date,
-                Orders = pagedOrders
-            };
+            return customer.ToCustomerWithOrdersDto(pagedOrders);
         }
 
         public async Task<Customer?> UpdateAsync(int id, CustomerUpdateDto customerUpdateDto)

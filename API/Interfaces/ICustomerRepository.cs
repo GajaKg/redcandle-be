@@ -6,9 +6,9 @@ namespace API.Interfaces
 {
     public interface ICustomerRepository
     {
-        Task<PagedList<CustomerDto>> GetAllAsync(PaginationParams paginationParams);
+        Task<PagedList<CustomerDto>> GetAllAsync(OrderByParams orderByParams);
         Task<CustomerDto?> GetByIdAsync(int id);
-        Task<CustomerWithOrdersDto?> GetOrdersByCustomerIdAsync(int id, OrdersOrderByParams ordersOrderByParams);
+        Task<CustomerWithOrdersDto?> GetOrdersByCustomerIdAsync(int id, OrderByParams orderByParams);
         Task<Customer> CreateAsync(Customer customer);
         Task<Customer?> UpdateAsync(int id, CustomerUpdateDto customerUpdateDto);
         Task<Customer?> DeleteAsync(int id);

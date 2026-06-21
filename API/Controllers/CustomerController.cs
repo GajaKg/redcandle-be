@@ -17,9 +17,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] PaginationParams paginationParams)
+        public async Task<IActionResult> GetAll([FromQuery] OrderByParams orderByParams)
         {
-            var customers = await _customerRepository.GetAllAsync(paginationParams);
+            var customers = await _customerRepository.GetAllAsync(orderByParams);
             // var customersDto = customers.Select(s => s.ToCustomerDto());
 
             // return Ok(customersDto);
@@ -38,9 +38,9 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{customerId}/orders")]
-        public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId, [FromQuery] OrdersOrderByParams ordersOrderByParams)
+        public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId, [FromQuery] OrderByParams orderByParams)
         {
-            var customer = await _customerRepository.GetOrdersByCustomerIdAsync(customerId, ordersOrderByParams);
+            var customer = await _customerRepository.GetOrdersByCustomerIdAsync(customerId, orderByParams);
 
             if (customer == null) return NotFound();
 

@@ -4,7 +4,7 @@ namespace API.Helpers
     {
         private const int MaxPerPage = 50;
         public int CurrentPage { get; set; } = 1;
-        private int _pageSize = 10;
+        private int _pageSize = 1000;
         public int PageSize
         {
             get => _pageSize;
