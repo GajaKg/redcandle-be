@@ -27,20 +27,21 @@ namespace API.Repository
                     Address = c.Address,
                     Contact = c.Contact,
                     Note = c.Note,
-                    Orders = c.Orders.Select(o => new OrderDto
-                    {
-                        Id = o.Id,
-                        Date = o.Date,
-                        Paid = o.Paid,
-                        Delivered = o.Delivered,
-                        Note = o.Note,
-                        OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
-                        {
-                            Id = op.ProductId,
-                            Name = op.Product.Name,
-                            Quantity = op.Quantity
-                        }).ToList()
-                    }).ToList()
+                    Date = c.Date,
+                    // Orders = c.Orders.Select(o => new OrderDto
+                    // {
+                    //     Id = o.Id,
+                    //     Date = o.Date,
+                    //     Paid = o.Paid,
+                    //     Delivered = o.Delivered,
+                    //     Note = o.Note,
+                    //     OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
+                    //     {
+                    //         Id = op.ProductId,
+                    //         Name = op.Product.Name,
+                    //         Quantity = op.Quantity
+                    //     }).ToList()
+                    // }).ToList()
                 }).AsQueryable();
 
             return await PagedList<CustomerDto>.CreateAsync(query, paginationParams.CurrentPage, paginationParams.PageSize);
@@ -79,22 +80,72 @@ namespace API.Repository
                     Address = c.Address,
                     Contact = c.Contact,
                     Note = c.Note,
-                    Orders = c.Orders.Select(o => new OrderDto
-                    {
-                        Id = o.Id,
-                        Date = o.Date,
-                        Paid = o.Paid,
-                        Delivered = o.Delivered,
-                        Note = o.Note,
-                        OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
+                    Date = c.Date,
+                    // Orders = c.Orders.Select(o => new OrderDto
+                    // {
+                    //     Id = o.Id,
+                    //     Date = o.Date,
+                    //     Paid = o.Paid,
+                    //     Delivered = o.Delivered,
+                    //     Note = o.Note,
+                    //     OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
+                    //     {
+                    //         Id = op.ProductId,
+                    //         Name = op.Product.Name,
+                    //         Quantity = op.Quantity
+                    //     }).ToList()
+                    // }).ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<CustomerWithOrdersDto?> GetOrdersByCustomerIdAsync(int id, OrdersOrderByParams ordersOrderByParams)
+        {
+
+            var ordersQuery = _context.Orders
+                                        .Include(o => o.OrderProducts)
+                                            .ThenInclude(op => op.Product)
+                                        .Where(o => o.CustomerId == id);
+
+            ordersQuery =
+                ordersOrderByParams.OrderByDate == OrderByDate.Asc
+                    ? ordersQuery.OrderBy(o => o.Date)
+                    : ordersQuery.OrderByDescending(o => o.Date);
+
+            var pagedOrders = await PagedList<OrderDto>.CreateAsync(
+                ordersQuery.Select(o => new OrderDto
+                {
+                    Id = o.Id,
+                    Date = o.Date,
+                    Paid = o.Paid,
+                    Delivered = o.Delivered,
+                    Note = o.Note,
+                    OrderProducts = o.OrderProducts
+                        .Select(op => new OrderProductDto
                         {
                             Id = op.ProductId,
                             Name = op.Product.Name,
                             Quantity = op.Quantity
-                        }).ToList()
-                    }).ToList()
-                })
-                .FirstOrDefaultAsync();
+                        })
+                        .ToList()
+                }),
+                ordersOrderByParams.CurrentPage,
+                ordersOrderByParams.PageSize
+            );
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            if (customer == null) return null;
+
+            return new CustomerWithOrdersDto
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                Address = customer.Address,
+                Contact = customer.Contact,
+                Note = customer.Note,
+                Date = customer.Date,
+                Orders = pagedOrders
+            };
         }
 
         public async Task<Customer?> UpdateAsync(int id, CustomerUpdateDto customerUpdateDto)
